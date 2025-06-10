@@ -1,0 +1,3 @@
+<app-unlogged-header *ngIf="!global.getIsLogged()"></app-unlogged-header>
+<app-logged-header *ngIf="global.getIsLogged()"></app-logged-header>
+<app-home></app-home>
