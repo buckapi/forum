@@ -35,11 +35,15 @@ export class AppComponent implements OnInit {
     private http: HttpClient, 
     private route: ActivatedRoute,
      public auth: AuthService
-  ) { }
+  ) { 
+    this.auth.loadFromStorage();
+    this.auth.user$.subscribe(user => {
+      this.user = user;
+    });
+  }
  
   ngOnInit() {
     this.global.getIsLogged();
-    this.auth.loadUserFromStorage();
     this.route.queryParams.subscribe(params => {
       const code = params['code'];
       if (code) {
@@ -53,9 +57,7 @@ export class AppComponent implements OnInit {
             console.error('Error al verificar código', err);
           }
         });
-      } else {
-        this.auth.loadFromStorage();
-      }
+      } 
     });
   }
   getIsLogged() {
