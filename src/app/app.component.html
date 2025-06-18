@@ -1,3 +1,18 @@
-<app-unlogged-header *ngIf="!global.getIsLogged()"></app-unlogged-header>
-<app-logged-header *ngIf="global.getIsLogged()"></app-logged-header>
-<app-home></app-home>
+<!-- Header -->
+<ng-container *ngIf="auth.user$ | async as user; else guestHeader">
+  <app-logged-header [user]="user"></app-logged-header>
+</ng-container>
+
+<!-- Contenido principal -->
+<ng-container [ngSwitch]="global.activeRoute">
+  <app-dashboard *ngSwitchCase="'dashboard'"></app-dashboard>
+  <app-create    *ngSwitchCase="'create'"></app-create>
+  <app-detail    *ngSwitchCase="'detail'"></app-detail>
+  <!-- por defecto -->
+  <app-home      *ngSwitchDefault></app-home>
+</ng-container>
+
+<!-- Header para invitados -->
+<ng-template #guestHeader>
+  <app-unlogged-header></app-unlogged-header>
+</ng-template>

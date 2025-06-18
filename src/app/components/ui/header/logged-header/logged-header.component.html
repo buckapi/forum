@@ -3,7 +3,7 @@
         <div class="row tt-row no-gutters">
             <div class="col-auto">
                 <!-- toggle mobile menu -->
-                <a class="toggle-mobile-menu" href="#">
+                <a class="toggle-mobile-menu" (click)="toggleMobileMenu()">
                     <svg class="tt-icon">
                       <use xlink:href="#icon-menu_icon"></use>
                     </svg>
@@ -21,36 +21,19 @@
                   <div class="tt-desktop-menu">
                     <nav>
                         <ul>
-                            <li><a href="page-categories.html"><span>Categorías</span></a></li>
-                            <li><a href="page-tabs.html"><span>Tendencias</span></a></li>
-                            <!-- <li><a href="page-create-topic.html"><span>Nuevo</span></a></li> -->
                             <li>
-                                <a href="page-single-user.html"><span>Páginas</span></a>
-                                <ul>
-                                    <li><a href="index.html">Home</a></li>
-                                    <li><a href="page-single-topic.html">Single Topic</a></li>
-                                    <li><a href="page-create-topic.html">Create Topic</a></li>
-                                    <li><a href="page-single-user.html">Single User Activity</a></li>
-                                    <li><a href="page-single_threads.html">Single User Threads</a></li>
-                                    <li><a href="page-single_replies.html">Single User Replies</a></li>
-                                    <li><a href="page-single_followers.html">Seguidores</a></li>
-                                    <li><a href="page-single_categories.html">Categorías</a></li>
-                                    <li><a href="page-single_settings.html">Configuración</a></li>
-                                    <li><a href="page-signup.html">Registrarse</a></li>
-                                    <li><a href="page-login.html">Iniciar Sesión</a></li>
-                                    <li><a href="page-categories.html">Categorías</a></li>
-                                    <li><a href="page-categories-single.html">Categoría</a></li>
-                                    <li><a href="page-tabs.html">Acerca de</a></li>
-                                    <li><a href="page-tabs_guidelines.html">Guías</a></li>
-                                    <li><a href="_demo_modal-advancedSearch.html">Búsqueda Avanzada</a></li>
-                                    <li><a href="error404.html">Error 404</a></li>
-                                    <li><a href="_demo_modal-age-confirmation.html">Age Verification</a></li>
-                                    <li><a href="_demo_modal-level-up.html">Level up Notification</a></li>
-                                    <li><a href="messages-page.html">Message</a></li>
-                                    <li><a href="messages-compose.html">Message Compose</a></li>
-                                </ul>
+                              <a (click)="global.setRoute('home')"><span>Temas</span></a>
                             </li>
-                        </ul>
+                            <li>
+                              <a><span>Categorías</span></a>
+                              <ul class="dropdown-menu">
+                                <li *ngFor="let corriente of corrientes">
+                                  <a>{{ corriente.name }}</a>
+                                </li>
+                              </ul>
+                            </li>
+                          </ul>
+                          
                     </nav>
                 </div>
                 <!-- /desctop menu -->
@@ -146,11 +129,17 @@
                     </div>
                     <div class="custom-select-01">
                         <select>
-                            <option value="Default Sorting">azyrusmax</option>
-                            <option value="value 01">value 01</option>
-                            <option value="value 02">value 02</option>
+                   <option (click)="global.setRoute('dashboard')">{{ user?.name || user?.username }} </option>
+                    <option (click)="logout()">Cerrar sesión</option>
                         </select>
                     </div>
+                    <a class="tt-btn-create-topic" (click)="global.setRoute('create')">
+                        <span class="tt-icon">
+                            <svg>
+                              <use xlink:href="#icon-create_new"></use>
+                            </svg>
+                        </span>
+                    </a>
                 </div>
             </div>
         </div>
