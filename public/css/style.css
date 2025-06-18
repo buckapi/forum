@@ -1,5 +1,4 @@
 @import url(https://fonts.googleapis.com/css?family=Krub:400,500,600);
-@import '~quill/dist/quill.snow.css';
 /*!
  * Bootstrap Reboot v4.3.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors
@@ -125,6 +124,7 @@
 
 .mfp-preloader a:hover {
 	color: #fff
+
 }
 
 .mfp-s-error .mfp-content,
@@ -6880,7 +6880,8 @@ hr {
 }
 
 #tt-pageContent.tt-offset-small {
-	padding-top: 70px
+	padding-top: 70px;
+	background: #c4dafa;
 }
 
 @media (max-width:575px) {

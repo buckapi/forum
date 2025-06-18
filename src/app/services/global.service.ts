@@ -14,6 +14,12 @@ corrientes$ = this.corrientesSubject.asObservable();
 private topicsSubject = new BehaviorSubject<any[]>([]);
 topics$ = this.topicsSubject.asObservable();
 topic: any;
+private reactionsSubject = new BehaviorSubject<any[]>([]);
+reactions$ = this.reactionsSubject.asObservable();
+private commentsSubject = new BehaviorSubject<any[]>([]);
+comments$ = this.commentsSubject.asObservable();
+comments: any[] = [];
+reactions: any[] = [];
   constructor() {
     this.initcorrientesRealtime();
     this.inittopicsRealtime();
@@ -69,5 +75,21 @@ async inittopicsRealtime() {
 preTopic(topic: any) {
   this.activeRoute = 'detail';
   this.topic = topic;
+}
+loadReactions() {
+  this.pb.collection('forumReactions').getFullList({
+    filter: `targetId="${this.topic.id}" && targetType="topic"`
+  }).then((reactions: any[]) => {
+    this.reactions = reactions;
+  });
+}
+loadComments() {
+  this.pb.collection('forumPosts').getFullList({
+    filter: `topic="${this.topic.id}"`,
+    sort: '-created',
+    expand: 'author'
+  }).then((comments: any[]) => {
+    this.comments = comments;
+  }); 
 }
 }

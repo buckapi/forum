@@ -1,4 +1,4 @@
-<main id="tt-pageContent">
+<main id="tt-pageContent" style="background: #c4dafa;">
     <div class="container">
         <div class="tt-single-topic-list">
             <div class="tt-item">
@@ -7,14 +7,14 @@
                         <div class="tt-item-info info-top">
                             <div class="tt-avatar-icon">
                                 <i class="tt-icon">
-                                    <img src="{{global.topic.author.avatar}}" alt="">
+                                    <img src="{{global.topic.author}}" alt="">
                                 </i>
                             </div>
                             <div class="tt-avatar-title">
                                <a >{{global.topic.author}}</a>
                             </div>
                             <a  class="tt-info-time">
-                                <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>{{global.topic.created_at}}
+                                <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>{{global.topic.created}}
                             </a>
                         </div>
                         <h3 class="tt-item-title">
@@ -46,21 +46,125 @@
                           <i class="tt-icon"><svg><use xlink:href="#icon-favorite"></use></svg></i>
                           <span class="tt-text">{{ reactions.favorite }}</span>
                         </a>
-                      </div>
+                    </div>
+                    <h6 class="tt-title">Estado de la discusión</h6>
+                    <div class="tt-row-icon">
+                        <div class="tt-item">
+                            <a  class="tt-icon-btn tt-position-bottom">
+                                <i class="tt-icon"><svg><use xlink:href="#icon-reply"></use></svg></i>
+                                <span class="tt-text">{{comments.length}}</span>
+                            </a>
+                        </div>
+                        <div class="tt-item">
+                            <a  class="tt-icon-btn tt-position-bottom">
+                                <i class="tt-icon"><svg><use xlink:href="#icon-view"></use></svg></i>
+                                <span class="tt-text">{{global.topic.views}}</span>
+                            </a>
+                        </div>
+                        <div class="tt-item">
+                            <a  class="tt-icon-btn tt-position-bottom">
+                                <i class="tt-icon"><svg><use xlink:href="#icon-user"></use></svg></i>
+                                <span class="tt-text">{{global.topic.author.username}}</span>
+                            </a>
+                        </div>
+                        <div class="tt-item">
+                            <a  class="tt-icon-btn tt-position-bottom">
+                                <i class="tt-icon"><svg><use xlink:href="#icon-like"></use></svg></i>
+                                <span class="tt-text">{{reactions.like}}</span>
+                            </a>
+                        </div>
+                        <div class="tt-item">
+                            <a  class="tt-icon-btn tt-position-bottom">
+                                <i class="tt-icon"><svg><use xlink:href="#icon-favorite"></use></svg></i>
+                                <span class="tt-text">{{reactions.favorite}}</span>
+                            </a>
+                        </div>
+                       
+                    </div>
+                    <hr>
+                     
+                      <div class="tt-comments">
+                        <h5>Comentarios</h5>
+                        <div *ngFor="let comment of comments" class="tt-comment">
+                            <div class="tt-single-topic">
+                                <div class="tt-item-header pt-noborder">
+                                    <div class="tt-item-info info-top">
+                                        <div class="tt-avatar-icon">
+                                            <i class="tt-icon"><svg><use xlink:href="#icon-ava-v"></use></svg></i>
+                                        </div>
+                                        <div class="tt-avatar-title">
+                                           <a >{{comment.expand?.author?.name || 'Usuario'}}</a>
+                                        </div>
+                                        <a  class="tt-info-time">
+                                            <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>{{comment.created}}
+                                        </a>
+                                        <div class="tt-item-info info-bottom">
+                                            <a class="tt-icon-btn" (click)="react('like', comment.id, 'comment')" [class.disabled]="!userId">
+                                                👍 {{ comment.reactions?.like || 0 }}
+                                              </a>
+                                              <a class="tt-icon-btn" (click)="react('dislike', comment.id, 'comment')" [class.disabled]="!userId">
+                                                👎 {{ comment.reactions?.dislike || 0 }}
+                                              </a>
+                                              <a class="tt-icon-btn" (click)="setReplyTarget(comment.id)">💬 Responder</a>
+                                          
+                                        </div>    
+                                    </div>
+                                </div>                                
+                          
+                            <div class="tt-item-description">
+                                  <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(comment.content)"></div>
+                                  <div class="topic-inner-list">
+                                    <div class="topic-inner" *ngFor="let reply of comment.replies">
+                                        <div class="topic-inner-title">
+                                            <div class="topic-inner-avatar">
+                                                <i class="tt-icon"><svg><use xlink:href="#icon-ava-s"></use></svg></i>
+                                            </div>
+                                            <div class="topic-inner-title"><a >{{reply.expand?.author?.name || 'Usuario'}}</a></div>
+                                        </div>
+                                        <div class="topic-inner-description">
+                                            <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(reply.content)"></div>
+                                        </div>
+                                        <div class="tt-item-info info-bottom">
+                                            <a class="tt-icon-btn" (click)="react('like', reply.id, 'comment')" [class.disabled]="!userId">
+                                              👍 {{ reply.reactions?.like || 0 }}
+                                            </a>
+                                            <a class="tt-icon-btn" (click)="react('dislike', reply.id, 'comment')" [class.disabled]="!userId">
+                                              👎 {{ reply.reactions?.dislike || 0 }}
+                                            </a>
+                                           
+                                          </div>
+                                          
+                                          <div *ngIf="replyToCommentId === reply.id" class="form-reply">
+                                            <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="form-default mt-2">
+                                              <textarea formControlName="content" class="form-control" rows="2" placeholder="Escribe una respuesta..."></textarea>
+                                              <button class="btn btn-primary btn-sm mt-1" type="submit">Responder</button>
+                                            </form>
+                                          </div> 
+                                    </div>
+                                    
+                                </div> 
+                                
+                            </div>
+                          
+                            <!-- Formulario de respuesta -->
+                            <div *ngIf="replyToCommentId === comment.id" class="form-reply">
+                              <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="form-default mt-2">
+                                <textarea formControlName="content" class="form-control" rows="2" placeholder="Escribe una respuesta..."></textarea>
+                                <button class="btn btn-primary btn-sm mt-1" type="submit">Responder</button>
+                              </form>
+                            </div>
+                            
+                            
+                            </div>
+                        </div>                       
+                      
                 </div>
+                <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="form-default mt-3">
+                    <textarea formControlName="content" class="form-control" rows="4" placeholder="Escribe un comentario..."></textarea>
+                    <button class="btn btn-secondary mt-2" type="submit" [disabled]="commentForm.invalid || !userId">Comentar</button>          
+                </form>
             </div>
-            <div class="tt-comments">
-                <h5>Comentarios</h5>
-                <div *ngFor="let comment of comments" class="tt-comment">
-                  <div class="tt-item-description">
-                    {{ comment.expand?.author?.name || 'Usuario' }}:
-                    <div [innerHTML]="sanitizer.bypassSecurityTrustHtml(comment.content)"></div>
-                </div>
-                </div>
-              </div>
         </div>
-        <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="form-default mt-3">
-            <textarea formControlName="content" class="form-control" rows="4" placeholder="Escribe un comentario..."></textarea>
-            <button class="btn btn-secondary mt-2" type="submit" [disabled]="commentForm.invalid || !userId">Comentar</button>          </form>
+        </div>
     </div>
 </main>

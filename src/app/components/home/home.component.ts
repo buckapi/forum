@@ -22,6 +22,7 @@ export class HomeComponent {
   {  this.pb = this.global.pb;
   }
   ngOnInit(): void {
+    
     this.auth.user$.subscribe(u => this.user = u);
 
     this.global.corrientes$.subscribe((corrientes : any[]) => {

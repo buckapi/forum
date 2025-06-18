@@ -62,20 +62,20 @@
                     <div class="row align-items-center no-gutters  hide-desktope">
                         <div class="col-11">
                             <ul class="tt-list-badge">
-                                <li class="show-mobile"><a href="index.html#"><span class="tt-color06 tt-badge">{{topic.corriente}}</span></a></li>
+                                <li class="show-mobile"><a ><span class="tt-color06 tt-badge">{{topic.corriente}}</span></a></li>
                             </ul>
                         </div>
                         <div class="col-1 ml-auto show-mobile">
-                            <div class="tt-value">2d</div>
+                            <div class="tt-value"></div>
                         </div>
                     </div>
                 </div>
                 <div class="tt-col-category"><span class="tt-color06 tt-badge"><span>{{ topic.corriente.name }}</span>
                 </span></div>
-                <div class="tt-col-value hide-mobile">671</div>
-                <div class="tt-col-value tt-color-select  hide-mobile">29</div>
-                <div class="tt-col-value hide-mobile">1.3k</div>
-                <div class="tt-col-value hide-mobile">2d</div>
+                <div class="tt-col-value hide-mobile">{{global.reactions.length}}</div>
+                <div class="tt-col-value tt-color-select  hide-mobile">{{global.comments.length}}</div>
+                <div class="tt-col-value hide-mobile">{{global.comments.length}}</div>
+                <div class="tt-col-value hide-mobile">{{topic.created | date}}</div>
             </div>
            
             <div class="tt-row-btn">

@@ -23,6 +23,10 @@ export class DetailComponent implements OnInit {
   comments: any[] = [];
   commentForm: FormGroup;
   userId: string | null = null;
+  replyToCommentId: string | null = null;
+  commentReactions: { [id: string]: { like: number; dislike: number } } = {};
+  replyReactions: { [id: string]: { like: number; dislike: number } } = {};
+  
   constructor(
     public global: GlobalService,
     public sanitizer: DomSanitizer,
@@ -49,7 +53,7 @@ export class DetailComponent implements OnInit {
     return this.sanitizer.bypassSecurityTrustHtml(this.global.topic.content || '');
   }
 
-  async react(type: 'like' | 'dislike' | 'favorite', targetId: string) {
+  /* async react(type: 'like' | 'dislike' | 'favorite', targetId: string) {
     console.log('Intentando reaccionar:', { type, targetId, userId: this.userId });
     if (!this.userId) return;
   
@@ -79,8 +83,29 @@ export class DetailComponent implements OnInit {
     } catch (error) {
       console.error('Error al reaccionar:', error, data);
     }
-  }
+  } */
 
+    async react(type: 'like' | 'dislike' | 'favorite', targetId: string, targetType: 'topic' | 'comment' = 'topic') {
+      if (!this.userId) return;
+    
+      try {
+        const existing = await this.global.pb.collection('forumReactions').getFirstListItem(
+          `author="${this.userId}" && targetId="${targetId}" && type="${type}" && targetType="${targetType}"`
+        );
+        if (existing) return;
+      } catch {}
+    
+      const data = { type, targetType, targetId, author: this.userId };
+    
+      try {
+        await this.global.pb.collection('forumReactions').create(data);
+        this.loadReactions();
+        this.loadComments(); // para actualizar reacciones en comentarios
+      } catch (error) {
+        console.error('Error al reaccionar:', error);
+      }
+    }
+    
   async loadReactions() {
     try {
       const reactions = await this.global.pb.collection('forumReactions').getFullList({
@@ -94,8 +119,11 @@ export class DetailComponent implements OnInit {
       console.error('Error cargando reacciones:', error);
     }
   }
+  setReplyTarget(commentId: string) {
+    this.replyToCommentId = commentId;
+  }
 
-  async loadComments() {
+ /*  async loadComments() {
     
     try {
       this.comments = await this.global.pb.collection('forumPosts').getFullList({
@@ -106,9 +134,47 @@ export class DetailComponent implements OnInit {
     } catch (error) {
       console.error('Error al cargar comentarios:', error);
     }
-  }
-
-  async submitComment() {
+  } */
+    async loadComments() {
+      try {
+        const allComments = await this.global.pb.collection('forumPosts').getFullList({
+          filter: `topic="${this.global.topic.id}"`,
+          sort: 'created',
+          expand: 'author,parent'
+        });
+    
+        // Cargar reacciones por cada comentario
+        for (const comment of allComments) {
+          const reactions = await this.global.pb.collection('forumReactions').getFullList({
+            filter: `targetId="${comment.id}" && targetType="comment"`
+          });
+    
+          comment['reactions'] = {
+            like: reactions.filter(r => r['type'] === 'like').length,
+            dislike: reactions.filter(r => r['type'] === 'dislike').length
+          };
+        }
+    
+        // Agrupar por comentarios principales e hijos
+        const map: { [id: string]: any[] } = {};
+        allComments.forEach(c => {
+          if (c['parent']) {
+            if (!map[c['parent']]) map[c['parent']] = [];
+            map[c['parent']].push(c);
+          }
+        });
+    
+        this.comments = allComments
+          .filter(c => !c['parent'])
+          .map(c => ({ ...c, replies: map[c['id']] || [] }));
+    
+      } catch (error) {
+        console.error('Error al cargar comentarios:', error);
+      }
+    }
+    
+    
+  /* async submitComment() {
     console.log('Enviando comentario con autor ID:', this.userId);
 
     if (!this.userId || this.commentForm.invalid) {
@@ -131,6 +197,30 @@ export class DetailComponent implements OnInit {
     } catch (error) {
       console.error('Error al comentar:', error);
     }
-  }
-  
+  } */
+ 
+    async submitComment() {
+      if (!this.userId || this.commentForm.invalid) return;
+    
+      const content = this.commentForm.value.content;
+      const data: any = {
+        content,
+        author: this.userId,
+        topic: this.global.topic.id
+      };
+    
+      if (this.replyToCommentId) {
+        data.parent = this.replyToCommentId;
+      }
+    
+      try {
+        await this.global.pb.collection('forumPosts').create(data);
+        this.commentForm.reset();
+        this.replyToCommentId = null;
+        this.loadComments();
+      } catch (error) {
+        console.error('Error al comentar:', error);
+      }
+    }
+    
 }
