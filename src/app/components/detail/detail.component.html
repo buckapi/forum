@@ -34,15 +34,15 @@
                        
                     </div>
                     <div class="tt-item-info info-bottom">
-                        <a class="tt-icon-btn" (click)="react('like', global.topic.id)">
-                          <i class="tt-icon"><svg><use xlink:href="#icon-like"></use></svg></i>
-                          <span class="tt-text">{{ reactions.like }}</span>
-                        </a>
-                        <a class="tt-icon-btn" (click)="react('dislike', global.topic.id)">
+                        <a class="tt-icon-btn" (click)="react('like', global.topic.id)" [class.disabled]="!userId">
+                            <i class="tt-icon"><svg><use xlink:href="#icon-like"></use></svg></i>
+                            <span class="tt-text">{{ reactions.like }}</span>
+                          </a>
+                        <a class="tt-icon-btn" (click)="react('dislike', global.topic.id)" [class.disabled]="!userId">
                           <i class="tt-icon"><svg><use xlink:href="#icon-dislike"></use></svg></i>
                           <span class="tt-text">{{ reactions.dislike }}</span>
                         </a>
-                        <a class="tt-icon-btn" (click)="react('favorite', global.topic.id)">
+                        <a class="tt-icon-btn" (click)="react('favorite', global.topic.id)" [class.disabled]="!userId">
                           <i class="tt-icon"><svg><use xlink:href="#icon-favorite"></use></svg></i>
                           <span class="tt-text">{{ reactions.favorite }}</span>
                         </a>

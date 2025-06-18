@@ -50,14 +50,14 @@ export class DetailComponent implements OnInit {
   }
 
   async react(type: 'like' | 'dislike' | 'favorite', targetId: string) {
-    if (!this.userId || this.commentForm.invalid) return;
-
+    console.log('Intentando reaccionar:', { type, targetId, userId: this.userId });
+    if (!this.userId) return;
+  
     try {
       // Verifica si ya reaccionó
       const existing = await this.global.pb.collection('forumReactions').getFirstListItem(
         `author="${this.userId}" && targetId="${targetId}" && type="${type}" && targetType="topic"`
       );
-
       if (existing) {
         console.warn('Ya reaccionó con este tipo.');
         return;
@@ -65,19 +65,19 @@ export class DetailComponent implements OnInit {
     } catch (e: any) {
       // Si no hay reacción previa, se lanza error (Expected)
     }
-
+  
     const data = {
       type,
       targetType: 'topic',
       targetId,
       author: this.userId
     };
-
+  
     try {
       await this.global.pb.collection('forumReactions').create(data);
       this.loadReactions(); // refresca los contadores
     } catch (error) {
-      console.error('Error al reaccionar:', error);
+      console.error('Error al reaccionar:', error, data);
     }
   }
 
